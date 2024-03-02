@@ -1,7 +1,9 @@
-import pygame
-import time
-import random
-from pygame import mixer
+import pygame       # the modul itself
+import time         # the time to be handled
+import random       # coordinates
+from pygame import mixer      # the pygame music manager
+
+#from pickle import dump,load  # for the best score -> to be implemented
 
 pygame.font.init()     # for the writing fonts
 pygame.init()
@@ -30,7 +32,9 @@ STAR_COLORS = ['yellow', 'green', 'red','blue']  # for the meteor(stars)
 STAR_COLOR_PROBABILITY = [0.6, 0.2, 0.1,0.1]
 
 
-def draw(player, elapsed_time, stars):      # the rendering function
+
+
+def draw(player, elapsed_time, stars,score,best_score):      # the rendering function
     WINDOW.blit(BACKGROUND_IMAGE, (0, 0))  # where it puts the left top corner of the back image
 
     time_text = FONT.render(f"Time: {round(elapsed_time)}s", 1, 'white')  # time counter
@@ -38,12 +42,19 @@ def draw(player, elapsed_time, stars):      # the rendering function
 
     pygame.draw.rect(WINDOW, 'blue', player) # this is the player
 
+    score_text = FONT.render(f"Score: {score}",1,'white')
+    best_score_text = FONT.render(f"Your best score: {best_score}", 1, 'white')
+    WINDOW.blit(score_text,(WIDTH-300,10))
+    WINDOW.blit(best_score_text,(WIDTH-300,40))
+
     for star in stars:
         pygame.draw.rect(WINDOW, star['color'], star['rect']) # it renders the shooting stars
 
     pygame.display.update()   # updates the visuals of the game
 
 
+def return_best_score():
+    pass                       # with pickle
 
 
 def main():
@@ -51,6 +62,9 @@ def main():
     global PLAYER_VELOCITY
     global STAR_WIDTH             # to modify them later
     global PLAYER_WIDTH,PLAYER_HEIGHT
+
+    score= 0
+    best_score = 100     # to be changed to pickle
 
     hit = False
 
@@ -121,33 +135,32 @@ def main():
                 # Continue the game if the collision is with a green or red star
                 if star['color'] == 'green':
                     STAR_WIDTH += 5
+                    score+=1
 
                 elif star['color'] == 'red':
                     PLAYER_VELOCITY += 2
+                    score += 1
 
 
                 elif star['color'] == 'blue':
+                    score += 1
 
                     PLAYER_WIDTH += 15
-
                     PLAYER_HEIGHT += 10
-
                     PLAYER_Y_RENDER_MODIFIER_WHEN_BLUE_STAR = 10
 
                     player.width = PLAYER_WIDTH
-
                     player.height = PLAYER_HEIGHT
 
-                    # Update the player's vertical rendering position
-
                     PLAYER_Y_RENDER = HEIGHT - PLAYER_HEIGHT + PLAYER_Y_RENDER_MODIFIER_WHEN_BLUE_STAR
+                    # Update the player's vertical rendering position
 
                     player.y = PLAYER_Y_RENDER
 
                 hit = False
 
 
-        draw(player, elapsed_time, stars)
+        draw(player, elapsed_time, stars,score,best_score)
 
     pygame.quit()
 
