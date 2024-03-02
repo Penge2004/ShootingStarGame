@@ -60,12 +60,12 @@ def main():
     PLAYER_Y_RENDER_MODIFIER_WHEN_BLUE_STAR = 0        # for later after blue star
     PLAYER_Y_RENDER = HEIGHT - PLAYER_HEIGHT + PLAYER_Y_RENDER_MODIFIER_WHEN_BLUE_STAR
 
-    player = pygame.Rect(200, PLAYER_Y_RENDER, PLAYER_WIDTH, PLAYER_HEIGHT)  # the player proprieties
+    player = pygame.Rect(WIDTH//2, PLAYER_Y_RENDER, PLAYER_WIDTH, PLAYER_HEIGHT)  # the player proprieties
 
     clock = pygame.time.Clock()
     start_time = time.time()   # for the time
 
-    star_add_increment = 2000  # to render faster after some time
+    star_add_increment = 1500  # to render faster after some time
     star_count = 0
 
     stars = [] # the stars are stored in a list
@@ -102,7 +102,7 @@ def main():
         for star in stars[:]:  # copy because we will remove stars from stars list
             star['rect'].y += STAR_VELOCITY
             if star['rect'].y > HEIGHT:
-                stars.remove(star)
+                stars.remove(star)                     # for wall collisions
             elif star['rect'].y + star['rect'].height > player.y and star['rect'].colliderect(player):
                 stars.remove(star)
                 hit = True
@@ -120,10 +120,10 @@ def main():
             else:
                 # Continue the game if the collision is with a green or red star
                 if star['color'] == 'green':
-                    STAR_WIDTH += 3
+                    STAR_WIDTH += 5
 
                 elif star['color'] == 'red':
-                    PLAYER_VELOCITY += 1
+                    PLAYER_VELOCITY += 2
 
 
                 elif star['color'] == 'blue':
