@@ -3,7 +3,6 @@ import time         # the time to be handled
 import random       # coordinates
 from pygame import mixer      # the pygame music manager
 
-#from pickle import dump,load  # for the best score -> to be implemented
 
 pygame.font.init()     # for the writing fonts
 pygame.init()
@@ -32,6 +31,17 @@ STAR_COLORS = ['yellow', 'green', 'red','blue']  # for the meteor(stars)
 STAR_COLOR_PROBABILITY = [0.6, 0.2, 0.1,0.1]
 
 
+def get_best_score():
+    bestscore_file = open('best_score.txt','r')
+    bestscore = bestscore_file.read()
+    bestscore_file.close()
+    return bestscore
+
+def save_new_best(new_best):
+    bestscore_file = open('best_score.txt', 'w')
+    bestscore_file.write(new_best)
+    bestscore_file.close()
+
 
 
 def draw(player, elapsed_time, stars,score,best_score):      # the rendering function
@@ -53,9 +63,6 @@ def draw(player, elapsed_time, stars,score,best_score):      # the rendering fun
     pygame.display.update()   # updates the visuals of the game
 
 
-def return_best_score():
-    pass                       # with pickle
-
 
 def main():
 
@@ -64,7 +71,8 @@ def main():
     global PLAYER_WIDTH,PLAYER_HEIGHT
 
     score= 0
-    best_score = 100     # to be changed to pickle
+
+    best_score = int(get_best_score())
 
     hit = False
 
@@ -97,7 +105,7 @@ def main():
                 # the proprieties of the shooting star
                 stars.append(star) # it stores in a list
 
-            star_add_increment = max(200, star_add_increment - 50)
+            star_add_increment = max(100, star_add_increment - 50)
             star_count = 0      # for the faster rendering after some time
 
         for event in pygame.event.get():
@@ -130,9 +138,15 @@ def main():
                                         HEIGHT / 2 - lost_text.get_height() / 2))
                 pygame.display.update()
                 pygame.time.delay(4000)
+
+                #update best score when it's the case
+                if best_score < score:
+                    best_score = score
+                    save_new_best(str(best_score))
+
                 break
             else:
-                # Continue the game if the collision is with a green or red star
+                # Continue the game if the collision is any other color
                 if star['color'] == 'green':
                     STAR_WIDTH += 5
                     score+=1
